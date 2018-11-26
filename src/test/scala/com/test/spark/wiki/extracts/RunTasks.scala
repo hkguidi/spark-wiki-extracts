@@ -13,14 +13,15 @@ class RunTasks extends FunSuite with BeforeAndAfterEach {
       .getOrCreate()
   }
 
-  override protected def afterEach(): Unit = {
-    SparkSession.getActiveSession.foreach(_.close())
-  }
+    override protected def afterEach(): Unit = {
+      SparkSession.getActiveSession.foreach(_.close())
+    }
 
-  test("Run Tasks...") {
-    Seq(
-      Q1_WikiDocumentsToParquetTask(bucket),
-      Q2_ShowLeagueStatsTask(bucket)
-    ).foreach(_.run())
-  }
+    test("Run Tasks...") {
+      Seq(
+        Q1_WikiDocumentsToParquetTask(bucket),
+        Q2_ShowLeagueStatsTask(bucket)
+      ).foreach(_.run())
+      //Q2_ShowLeagueStatsTask(bucket).run()
+    }
 }

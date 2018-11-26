@@ -26,21 +26,26 @@ case class Q2_ShowLeagueStatsTask(bucket: String) extends Runnable {
       "par championnat")
     val sqlStandings = s"standings"
     standings.createTempView(sqlStandings)
-    val res = session.sql(s"SELECT league, season, ROUND(AVG(goalsFor), 1) FROM $sqlStandings " +
-      s"GROUP BY league, season ORDER BY league, season").show()
+    //val res1 = session.sql(s"SELECT league, season, ROUND(AVG(goalsFor), 1) FROM $sqlStandings " +
+    //  s"GROUP BY league, season ORDER BY league, season").show()
 
 
     // TODO Q2
     println("En Dataset, quelle est l'équipe la plus titrée de France ?")
-    standings.where($"league" === "Ligue 1" && $"position" === 1).groupByKey(row => row.team).count()
-      .agg(max("count")).show()
+    //standings.where($"league" === "Ligue 1" && $"position" === 1).groupByKey(row => row.team).count().show()
+    val res2 = session.sql(s"SELECT league, position, team, SUM(position) FROM $sqlStandings " +
+      s"WHERE league = 'Ligue 1' AND position = 1 " +
+      s"GROUP BY league, team, position ORDER BY sum(position) desc").show()
+
 
 
     // TODO Q3
     println("En Dataset, quelle est la moyenne de points des vainqueurs sur les 5 différents championnats ?")
     //En commentaire car avg ne reconnait pas la colonne points.
     //standings.where($"position" === 1).groupByKey(row => (row.league)).agg(avg(_.points)).show()
-
+    val res3 = session.sql(s"SELECT league, ROUND(AVG(points), 1) AS pointsMoy FROM $sqlStandings " +
+      s"WHERE position = 1 " +
+      s"GROUP BY league").show()
 
     // TODO Q5 Ecrire une udf spark "decade" qui retourne la décennie d'une saison sous la forme 199X ?
     val decade: Integer => String = _.toString.dropRight(1).concat("0")
